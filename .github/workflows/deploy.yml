@@ -14,22 +14,18 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    # Save the private key to a file
-    - name: Create SSH Key File
-      run: |
-        echo "${{ secrets.EC_SSH_KEY }}" > root.pem
-        chmod 600 root.pem
+    # Set up SSH agent and add private key for EC2 access
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.EC_SSH_KEY }}
 
     # Deploy updated code to EC2
     - name: Deploy to EC2
       run: |
-        ssh -i root.pem -o StrictHostKeyChecking=no ec2-user@ec2-3-110-218-232.ap-south-1.compute.amazonaws.com "bash -s" << 'COMMANDS'
+        ssh -o StrictHostKeyChecking=no ec2-user@ec2-3-110-218-232.ap-south-1.compute.amazonaws.com "bash -s" << 'COMMANDS'
           cd Jenkins-Test
           git pull origin master
           npm install
-          node index.js
+          pm2 reload nodejs-app || pm2 start index.js --name nodejs-app
         COMMANDS
-
-    # Cleanup
-    - name: Remove SSH Key File
-      run: rm -f root.pem
