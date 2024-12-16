@@ -20,17 +20,16 @@ jobs:
         echo "${{ secrets.EC2_SSH_KEY }}" > root.pem
         chmod 600 root.pem
 
-    # Deploy updated code to EC2 (Amazon Linux)
+    # Deploy updated code to EC2
     - name: Deploy to EC2
       run: |
-        ssh -i root.pem -o StrictHostKeyChecking=no ec2-user@<EC2_PUBLIC_IP> << 'EOF'
+        ssh -i root.pem -o StrictHostKeyChecking=no ec2-user@ec2-3-110-218-232.ap-south-1.compute.amazonaws.com "bash -s" << 'COMMANDS'
           cd Jenkins-Test
           git pull origin master
           npm install
           pm2 reload nodejs-app || pm2 start index.js --name nodejs-app
-        EOF
+        COMMANDS
 
     # Cleanup
     - name: Remove SSH Key File
       run: rm -f root.pem
-
