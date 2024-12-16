@@ -27,7 +27,7 @@ jobs:
           cd Jenkins-Test
           git pull origin master
           npm install
-          pm2 reload nodejs-app || pm2 start index.js --name nodejs-app
+          
         COMMANDS
 
     # Cleanup (not strictly needed when using ssh-agent)
