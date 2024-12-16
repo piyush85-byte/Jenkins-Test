@@ -17,7 +17,7 @@ jobs:
     # Save the private key to a file
     - name: Create SSH Key File
       run: |
-        echo "${{ secrets.EC2_SSH_KEY }}" > root.pem
+        echo "${{ secrets.EC_SSH_KEY }}" > root.pem
         chmod 600 root.pem
 
     # Deploy updated code to EC2
